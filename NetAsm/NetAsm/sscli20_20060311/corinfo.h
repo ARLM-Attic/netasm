@@ -2339,7 +2339,7 @@ public:
         REGNUM_R9,
         REGNUM_R10,
 #else
-        PORTABILITY_WARNING("Register numbers not defined on this platform")
+//        PORTABILITY_WARNING("Register numbers not defined on this platform")
 #endif
         REGNUM_COUNT,
         REGNUM_AMBIENT_SP, // ambient SP support. Ambient SP is the original SP in the non-BP based frame.
@@ -2954,7 +2954,7 @@ public:
 #define HELPER_TABLE_ALIGN          8
 
 #else
-#error "Unknown target"
+//#error "Unknown target"
 #endif  // _IA64_
 
 #endif // _COR_INFO_H_

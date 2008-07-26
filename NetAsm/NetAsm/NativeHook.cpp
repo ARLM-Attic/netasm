@@ -69,6 +69,7 @@ int DebugIndirectCall(JITMethodToDebug methodToDebug, int* stackPointer, int sta
 
 	// This part copy the stack from the original CLR call to the real method. This function is just an indirection
 	// to go back to unmanaged code.
+#ifdef _X86_
 	_asm {
 		push ebx;
 		mov ebx, stackPointer;
@@ -90,6 +91,8 @@ int DebugIndirectCall(JITMethodToDebug methodToDebug, int* stackPointer, int sta
 		call methodToDebug;
 		pop ebx;
 	}
+#endif
+	return 0;
 }
 
 #pragma managed
