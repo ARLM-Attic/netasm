@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)\x86"
+			IntermediateDirectory="$(ConfigurationName)\x86"
 			ConfigurationType="2"
 			CharacterSet="1"
 			ManagedExtensions="1"
@@ -64,6 +64,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="$(NoInherit)"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -93,8 +94,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)\x64"
+			IntermediateDirectory="$(ConfigurationName)\x64"
 			ConfigurationType="2"
 			CharacterSet="1"
 			ManagedExtensions="1"
@@ -137,6 +138,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="$(NoInherit)"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -166,8 +168,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)\x86"
+			IntermediateDirectory="$(ConfigurationName)\x86"
 			ConfigurationType="2"
 			CharacterSet="1"
 			ManagedExtensions="1"
@@ -210,6 +212,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="$(NoInherit)"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
@@ -238,13 +241,13 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy NetAsm.dll and NetAsm.xml to Bin directory for distribution"
-				CommandLine="copy $(OutDir)\NetAsm.dll $(SolutionDir)\Bin&#x0D;&#x0A;copy $(OutDir)\NetAsm.xml $(SolutionDir)\Bin&#x0D;&#x0A;"
+				CommandLine="copy $(OutDir)\NetAsm.dll $(SolutionDir)\Bin\x86\&#x0D;&#x0A;copy $(OutDir)\NetAsm.xml $(SolutionDir)\Bin\x86\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)\x64"
+			IntermediateDirectory="$(ConfigurationName)\x64"
 			ConfigurationType="2"
 			CharacterSet="1"
 			ManagedExtensions="1"
@@ -289,6 +292,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="$(NoInherit)"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				TargetMachine="17"
@@ -317,7 +321,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy NetAsm.dll and NetAsm.xml to Bin directory for distribution"
-				CommandLine="copy $(OutDir)\NetAsm.dll $(SolutionDir)\Bin&#x0D;&#x0A;copy $(OutDir)\NetAsm.xml $(SolutionDir)\Bin&#x0D;&#x0A;"
+				CommandLine="copy $(OutDir)\NetAsm.dll $(SolutionDir)\Bin\x64\&#x0D;&#x0A;copy $(OutDir)\NetAsm.xml $(SolutionDir)\Bin\x64\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

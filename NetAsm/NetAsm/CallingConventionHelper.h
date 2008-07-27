@@ -10,6 +10,8 @@ using namespace System;
 
 namespace NetAsm {
 
+	// This class needs a good refactoring to support multiple platform (x64, x86) and better handle the 
+	// stack size of the parameters.
 	ref class CallingConventionHelper
 	{
 	public:
@@ -21,22 +23,39 @@ namespace NetAsm {
 		static public CodeRef ConvertClrCallTo(MethodContextImpl^ methodContext, CodeRef codeRef, 
 											   Runtime::InteropServices::CallingConvention callingConvention) 
 		{
-			switch (callingConvention) {
-				case Runtime::InteropServices::CallingConvention::FastCall:
-					return ConvertClrCallToFastCall(methodContext,codeRef);
-					break;
-				case Runtime::InteropServices::CallingConvention::StdCall:
-				case Runtime::InteropServices::CallingConvention::Winapi:
-					return ConvertClrCallToStdCall(methodContext,codeRef);
-					break;
-				case Runtime::InteropServices::CallingConvention::ThisCall:
-					return ConvertClrCallToThisCall(methodContext,codeRef);
-					break;
-				case Runtime::InteropServices::CallingConvention::Cdecl:
-					return ConvertClrCallToCdecl(methodContext, codeRef);
-					break;
-				default:
-					return ConvertClrCallToClrCall(methodContext,codeRef);
+			if ( IntPtr::Size == 4 ) {
+				switch (callingConvention) {
+					case Runtime::InteropServices::CallingConvention::FastCall:
+						return ConvertClrCallToFastCall(methodContext,codeRef);
+						break;
+					case Runtime::InteropServices::CallingConvention::StdCall:
+					case Runtime::InteropServices::CallingConvention::Winapi:
+						return ConvertClrCallToStdCall(methodContext,codeRef);
+						break;
+					case Runtime::InteropServices::CallingConvention::ThisCall:
+						return ConvertClrCallToThisCall(methodContext,codeRef);
+						break;
+					case Runtime::InteropServices::CallingConvention::Cdecl:
+						return ConvertClrCallToCdecl(methodContext, codeRef);
+						break;
+					default:
+						return ConvertClrCallToClrCall(methodContext,codeRef);
+				}
+			} else {
+				switch (callingConvention) {
+					case Runtime::InteropServices::CallingConvention::FastCall:
+					case Runtime::InteropServices::CallingConvention::StdCall:
+					case Runtime::InteropServices::CallingConvention::Winapi:
+					case Runtime::InteropServices::CallingConvention::ThisCall:
+					case Runtime::InteropServices::CallingConvention::Cdecl:
+						throw gcnew ArgumentException("Invalid Calling Convention. CLRCall calling convention is supported only for x64");
+						break;
+					default:
+						// WARNING FOR x64, THE STACKSIZE IS PROBABLY WRONG!!!
+						// THIS IS JUST A TEMPORARY WORKAROUND TO COMPILE UNDER X64
+						return ConvertClrCallToClrCall(methodContext,codeRef);
+				}
+
 			}
 			return codeRef;
 		}
@@ -115,6 +134,7 @@ namespace NetAsm {
 			int size = methodContext->GetClassSize(paramType);
 
 			// Aligned on 4 bytes for the stack
+			// QUESTION: on x64, is this aligned on 8 bytes?
 			// TODO : CHECK MORE THIS RULE. Not sure it's working for all the cases.
 			int aligned = size % 4;
 			if ( aligned != 0 ) {

@@ -51,7 +51,7 @@
   <ItemGroup>
     <Reference Include="NetAsm, Version=1.0.0.0, Culture=neutral, PublicKeyToken=22b2532bfc35f6b5, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Bin\NetAsm.dll</HintPath>
+      <HintPath>..\Bin\x86\NetAsm.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -115,7 +115,9 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)\NetAsmDemo.exe $(SolutionDir)\Bin
-copy $(TargetDir)\NetAsmDemo*.dll $(SolutionDir)\Bin</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetDir)\NetAsmDemo.exe $(SolutionDir)\Bin\x86\
+copy $(TargetDir)\NetAsmDemo*.dll $(SolutionDir)\Bin\x86\
+copy $(TargetDir)\NetAsmDemo.exe $(SolutionDir)\Bin\x64\
+copy $(TargetDir)\NetAsmDemo*.dll $(SolutionDir)\Bin\x64\</PostBuildEvent>
   </PropertyGroup>
 </Project>

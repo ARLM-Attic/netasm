@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        "NetAsm"
+    </assembly>
+    <members>
+        <member name="M:NetAsm.JITHook.Remove">
+            <summary>
+Uninstall the hook.
+</summary>
+        </member>
+        <member name="M:NetAsm.JITHook.Install(System.Text.RegularExpressions.Regex,NetAsm.ICodeInjector)">
+            <summary>
+Installs the JIT Code Injector Hook with a global injector and a regex pattern matching on classnames.
+Use global injector with caution. The regexMatchClasses shouldn't match any class that are use directly or indirectly
+in the code executed by the global injector - or the global injector itself, as the JIT compiler will end up
+to an infinite recursive loop.
+</summary>
+            <param name="regexMatchOnClassNames">A regular expression matching full class names (with namespaces).</param>
+            <param name="globalInjector">An instance of a global injector</param>
+            <returns>true if installed successfully</returns>
+        </member>
+        <member name="M:NetAsm.JITHook.Install(System.String,NetAsm.ICodeInjector)">
+            <summary>
+Installs the JIT Code Injector Hook with a global injector and a regex pattern matching on classnames.
+Use global injector with caution. The regexMatchClasses shouldn't match any class that are use directly or indirectly
+in the code executed by the global injector - or the global injector itself, as the JIT compiler will end up
+to an infinite recursive loop.
+</summary>
+            <param name="regexMatchOnClassNames">A regular expression matching full class names (with namespaces).</param>
+            <param name="globalInjector">An instance of a global injector</param>
+            <returns>true if installed successfully</returns>
+        </member>
+        <member name="M:NetAsm.JITHook.Install">
+            <summary>
+Installs the JIT Code Injector Hook.
+</summary>
+            <returns>true if installed successfully</returns>
+        </member>
+        <member name="T:NetAsm.JITHook">
+            <summary>
+Main hook class. Just add a call to <c>JITHook.Install()</c> at the beginning of your application.
+</summary>
+        </member>
+        <member name="T:NetAsm.AllowCodeInjectionAttribute">
+            <summary>
+Set this attribute on class that should be analysed from code injection. 
+Use <see cref="T:NetAsm.CodeInjectionAttribute" /> to specify the code injection mode at the class level
+or the method level.
+</summary>
+        </member>
+        <member name="M:NetAsm.CallingConventionHelper.ConvertClrCallToThisCall(NetAsm.MethodContextImpl,NetAsm.CodeRef)">
+            <summary>
+Convert a ClrCall convention to a ThisCall convention.
+</summary>
+            <param name="methodInfo">The method to convert param from</param>
+            <param name="codeRef">A CodeRef to the original native code ref using ThisCall convention</param>
+            <return>A CodeRef using ThisCall convetion and redirecting call to orignal coderef</return>
+        </member>
+        <member name="M:NetAsm.CallingConventionHelper.ConvertCommonClrCallToStdCall(NetAsm.MethodContextImpl,NetAsm.CodeRef,System.Boolean)">
+            <summary>
+Convert a ClrCall convention to a StdCall convention.
+</summary>
+            <param name="methodInfo">The method to convert param from</param>
+            <param name="codeRef">A CodeRef to the original native code ref using StdCall convention</param>
+            <return>A CodeRef using StdCall convetion and redirecting call to orignal coderef</return>
+        </member>
+        <member name="M:NetAsm.CallingConventionHelper.ConvertClrCallToFastCall(NetAsm.MethodContextImpl,NetAsm.CodeRef)">
+            <summary>
+Convert a ClrCall convention to a FastCall convention.
+</summary>
+            <param name="methodInfo">The method to convert param from</param>
+            <param name="codeRef">A CodeRef to the original native code ref using FastCall convention</param>
+            <return>A CodeRef using ClrCall convetion and redirecting call to orignal coderef</return>
+        </member>
+        <member name="M:NetAsm.ICodeInjector.CompileMethod(NetAsm.MethodContext)">
+            <summary>
+Called by the JIT to compile a method. This method should call SetOutputNativeCode on the context to return the
+native code to use for this method. The native code should follow the fastcall convention.
+If this method doesn't call SetOuputNativeCode, the default JIT compiler is used.
+</summary>
+            <param name="context">Context of the method to compile : it contains the MethodInfo reflection param,
+pointer to the IL Code and a helper function to call the native compiler for this method</param>
+        </member>
+        <member name="T:NetAsm.ICodeInjector">
+            <summary>
+This interface is used when the dynamic code injection is used on a method. To implement a dynamic code injection,
+you need to provide a subclass of this interface and implement the CompileMethod.
+Call <see cref="M:NetAsm.MethodContext.SetOutputNativeCode(NetAsm.CodeRef)" /> or to associate the native code to the method being compiled. If nothing
+is done in the CompileMethod, the default JIT compiler is used.
+It is possible, through the <see cref="T:NetAsm.MethodContext" />, to look at the associated method's IL Code to make your own compiler.
+</summary>
+        </member>
+        <member name="T:NetAsm.MethodContextImpl">
+            <summary>
+Internal MethodContext Implem
+</summary>
+        </member>
+        <member name="M:NetAsm.MethodContext.AllocExecutionBlock(System.Byte[])">
+            <summary>
+Alloccate a memory execution block and fill it with a byte buffer of native code.
+</summary>
+            <param name="nativeCodeBuffer">A buffer containinng native code to copy to the allocated execution block.</param>
+            <returns>A CodeRef referencing the execution memory.</returns>
+        </member>
+        <member name="M:NetAsm.MethodContext.AllocExecutionBlock(System.UInt32)">
+            <summary>
+Alloccate a memory execution block.
+</summary>
+            <param name="size">The size of the memory to allocate.</param>
+            <returns>A CodeRef referencing the execution memory.</returns>
+        </member>
+        <member name="M:NetAsm.MethodContext.SetOutputNativeCode(System.Byte[])">
+            <summary>
+Set the native code to be used by this method implementation.
+</summary>
+            <param name="nativeCodeArg">A byte buffer containing the native code of the method.</param>
+        </member>
+        <member name="M:NetAsm.MethodContext.SetOutputNativeCode(NetAsm.CodeRef)">
+            <summary>
+Set the native code to be used by this method implementation.
+</summary>
+            <param name="nativeCodeRefArg">A reference to a memory containing the native code of the method.
+The memory allocated should be virtual and protected for execution. The Size of the CodeRef is not used by the CodeInjector but
+could be used for debugging purposes.</param>
+        </member>
+        <member name="P:NetAsm.MethodContext.ILCode">
+            <summary>
+Gets a pointer to the IL code of this method.
+</summary>
+            <value>The IL code pointer.</value>
+        </member>
+        <member name="P:NetAsm.MethodContext.StackSize">
+            <summary>
+Gets the stackSize of the current method.
+</summary>
+            <value>The stack size.</value>
+        </member>
+        <member name="M:NetAsm.MethodContext.CompileILMethodToNative">
+            <summary>
+Compiles the IL code of this method using the native JIT compiler. This method call the original native compiler in order to compile
+the ILCode to native code. Use this method if you want to use the native compiled method while still being able to wrap
+the compiled code with your own code. 
+Use this method with caution, as you loose the debug when compiling a method with it.
+</summary>
+            <returns>a pointer to the compiled code</returns>
+        </member>
+        <member name="P:NetAsm.MethodContext.MethodInfo">
+            <summary>
+Gets the reflection MethodInfo associated with the method being compiled.
+</summary>
+            <value>The reflection MethodInfo.</value>
+        </member>
+        <member name="T:NetAsm.MethodContext">
+            <summary>
+MethodContext contains the context of the method being compiled. It is used in dynamic code injection, as a parameter for 
+a subclass of <see cref="T:NetAsm.ICodeInjector" />.
+</summary>
+        </member>
+        <member name="M:NetAsm.CodeRef.AllocExecutionBlock(System.Byte[])">
+            <summary>
+Alloccate a memory execution block and fill it with a byte buffer of native code.
+</summary>
+            <param name="nativeCodeBuffer">A buffer containinng native code to copy to the allocated execution block.</param>
+            <returns>A CodeRef referencing the execution memory.</returns>
+        </member>
+        <member name="M:NetAsm.CodeRef.AllocExecutionBlock(System.UInt32)">
+            <summary>
+Alloccate a memory execution block.
+</summary>
+            <param name="size">The size of the memory to allocate.</param>
+            <returns>A CodeRef referencing the execution memory.</returns>
+        </member>
+        <member name="M:NetAsm.CodeRef.BindToDllFunction(System.String,System.String)">
+            <summary>
+Retrieve the CodeRef for a function in a DLL.
+</summary>
+            <param name="dllName">Name of the dll.</param>
+            <param name="dllFunctionName">Name of the function in the dll.</param>
+            <returns>A CodeRef referencing the dll function.</returns>
+        </member>
+        <member name="M:NetAsm.CodeRef.IsNull">
+            <summary>
+Test if this CodeRef has a null reference.
+</summary>
+            <returns>True if the reference is null.</returns>
+        </member>
+        <member name="M:NetAsm.CodeRef.op_Implicit~System.Void*">
+            <summary>
+Performs an implicit conversion from <see cref="T:NetAsm.CodeRef" /> to void*.
+</summary>
+            <returns>The result of the conversion.</returns>
+        </member>
+        <member name="M:NetAsm.CodeRef.op_Implicit~System.IntPtr">
+            <summary>
+Performs an implicit conversion from <see cref="T:NetAsm.CodeRef" /> to System.IntPtr.
+</summary>
+            <returns>The result of the conversion.</returns>
+        </member>
+        <member name="T:NetAsm.CodeRef">
+            <summary>
+CodeRef contains a reference to an allocated execution memory block of native code.
+</summary>
+        </member>
+        <member name="T:NetAsm.NoCodeInjectionAttribute">
+            <summary>
+Set this attribute on a method that should not use any code injection defined at the class or application level. 
+</summary>
+        </member>
+        <member name="M:NetAsm.CodeInjectionAttribute.#ctor(System.String,System.String)">
+            <summary>
+Initializes a new instance of the <see cref="T:NetAsm.CodeInjectionAttribute" /> class with a DLL and the 
+exported function to bind to.
+</summary>
+            <param name="dllName">Name or path to the dll to bind to.</param>
+            <param name="functionNameExportedInDllWithFascallConventionArg">Name of the function to bind to</param>
+        </member>
+        <member name="M:NetAsm.CodeInjectionAttribute.#ctor(System.String)">
+            <summary>
+Initializes a new instance of the <see cref="T:NetAsm.CodeInjectionAttribute" /> class with a DLL name. The name of the method
+currently jitted will be used to search for exported function in the dll.
+</summary>
+            <param name="dllName">Name or path to the dll to bind to.</param>
+        </member>
+        <member name="M:NetAsm.CodeInjectionAttribute.#ctor(System.Type)">
+            <summary>
+Initializes a new instance of the <see cref="T:NetAsm.CodeInjectionAttribute" /> class with a dynamic JIT Code Injector. The class must
+inherit from <see cref="T:NetAsm.ICodeInjector" />.
+</summary>
+            <param name="jitCodeInjectorClass">The JIT code injector class.</param>
+        </member>
+        <member name="M:NetAsm.CodeInjectionAttribute.#ctor(System.Byte[])">
+            <summary>
+Initializes a new instance of the <see cref="T:NetAsm.CodeInjectionAttribute" /> class with a native static code.
+</summary>
+            <param name="nativeCode">The native code (assembler) in a byte buffer</param>
+        </member>
+        <member name="T:NetAsm.CodeInjectionAttribute">
+            <summary>
+Code Injection Attribute. Use this attribute at the class or method level to specify how to inject the native code. 
+NetAsm provides 3 modes to inject native code :
+<list type="bullet"><item><description>Static mode, specify the native code at compile time. The attribute contains a byte buffer of native code (assembler code)</description></item><item><description>Dll link mode, specify the native code at runtime. Link the method at runtime to a function in an external dll</description></item><item><description>Dynamic mode, with a subclass of the ICodeInjector interface executed at runtime</description></item></list>
+Be aware that the calling convetion used is FASTCALL. 
+NetAsm first look at the CodeInjectionAttribute at the method level, and then at the class level.
+At class level, only the Dll link and dynamic mode can be used.
+</summary>
+        </member>
+    </members>
+</doc>

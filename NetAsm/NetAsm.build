@@ -22,10 +22,16 @@
     <target name="build.NetAsm">
 	    <exec program="msbuild.exe" >
           <arg value="/t:Build"/>
-		  <arg value="/p:Configuration=Release"/>
+		  <arg value="/p:Configuration=Release;Platform=x86"/>
 		  <arg value="NetAsm.sln" />
 		</exec>
 		
+	    <exec program="msbuild.exe" >
+          <arg value="/t:Build"/>
+		  <arg value="/p:Configuration=Release;Platform=x64"/>
+		  <arg value="NetAsm.sln" />
+		</exec>
+
 	    <exec program="msbuild.exe" >
           <arg value="/t:Build"/>
 		  <arg value="/p:Configuration=Release"/>
@@ -34,10 +40,16 @@
 		
 	    <exec program="sn.exe" >
           <arg value="-R"/>
-		  <arg value="Bin\NetAsm.dll"/>
+		  <arg value="Bin\x86\NetAsm.dll"/>
 		  <arg value="NetAsm\key.snk"/>
 		</exec>				
 		
+	    <exec program="sn.exe" >
+          <arg value="-R"/>
+		  <arg value="Bin\x64\NetAsm.dll"/>
+		  <arg value="NetAsm\key.snk"/>
+		</exec>				
+
 		<call target="clean"/>
 		
 		<zip ziplevel="9" zipfile="NetAsm-Bin.zip">
